@@ -5,8 +5,9 @@ import (
 )
 
 type Model struct {
-	keyboardLayout string
-	keyboardSize   int
+	keyboardLayout   string
+	keyboardSize     int
+	isInfoBarVisible bool
 }
 
 func (m Model) Init() tea.Cmd {
@@ -19,7 +20,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
-		case "ctrl+l":
+		case "ctrl+shift+h":
+			m.isInfoBarVisible = !m.isInfoBarVisible
 			return m, nil
 		}
 	}
@@ -28,6 +30,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() tea.View {
 	s := getView(m)
+	if !m.isInfoBarVisible {
+		s = ""
+	}
 	v := tea.NewView(s)
 	v.AltScreen = true
 	return v

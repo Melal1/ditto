@@ -20,9 +20,9 @@ func getView(m Model) string {
 		Background(lipgloss.Color("#0000FF")).
 		TabWidth(0)
 
-	layoutCommand := bg.Render("CTRL + L: Layout")
-	sizeCommand := bg.Render("CTRL + S: Size")
-	hideCommand := bg.Render("CTRL + H: Hide Bar")
+	layoutCommand := bg.Render("C-S-L: Layout")
+	sizeCommand := bg.Render("C-S-S: Size")
+	hideCommand := bg.Render("C-S-H: Hide Bar")
 	activeLayout := bg.Render(strings.ToUpper(m.keyboardLayout))
 	activeSize := bg.Render(fmt.Sprintf("%d%%", m.keyboardSize))
 

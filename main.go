@@ -9,8 +9,9 @@ import (
 
 func main() {
 	p := tea.NewProgram(Model{
-		keyboardLayout: "qwerty",
-		keyboardSize:   75,
+		keyboardLayout:   "qwerty",
+		keyboardSize:     75,
+		isInfoBarVisible: true,
 	})
 	_, err := p.Run()
 	if err != nil {
