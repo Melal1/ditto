@@ -18,32 +18,31 @@ func (c CommandMap) ShortHelp() []key.Binding {
 
 func (c CommandMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{c.Layout},
-		{c.Size},
 		{c.HideKey},
-		{c.Quit},
+		{c.Size, c.Layout},
+		{c.Help, c.Quit},
 	}
 }
 
 var commands = CommandMap{
 	Layout: key.NewBinding(
 		key.WithKeys("ctrl+shift+l"),
-		key.WithHelp("ctrl+shift+l", "layout"),
+		key.WithHelp("C-S-l /", "layout"),
 	),
 	Size: key.NewBinding(
 		key.WithKeys("ctrl+shift+s"),
-		key.WithHelp("ctrl+shift+s", "size"),
+		key.WithHelp("C-S-s /", "size"),
 	),
 	HideKey: key.NewBinding(
 		key.WithKeys("ctrl+shift+h"),
-		key.WithHelp("ctrl+shift+h", "hide Bar"),
+		key.WithHelp("C-S-h /", "hide"),
 	),
 	Help: key.NewBinding(
 		key.WithKeys("?"),
-		key.WithHelp("?", "help"),
+		key.WithHelp("? /", "help"),
 	),
 	Quit: key.NewBinding(
 		key.WithKeys("q", "ctrl+c"),
-		key.WithHelp("q", "quit"),
+		key.WithHelp("q /", "quit"),
 	),
 }

@@ -56,8 +56,16 @@ func buildBaseView(m Model) string {
 		return lipgloss.Place(termW, termH, lipgloss.Center, lipgloss.Center, keyboard)
 	}
 
-	infoBar := buildInfoBar(m, termW)
-	return lipgloss.Place(termW, termH-1, lipgloss.Center, lipgloss.Center, keyboard) + "\n" + infoBar
+	keyboardWidth := 0
+	for _, line := range strings.Split(keyboard, "\n") {
+		if w := lipgloss.Width(line); w > keyboardWidth {
+			keyboardWidth = w
+		}
+	}
+
+	infoBar := buildInfoBar(m, keyboardWidth)
+	content := keyboard + "\n" + infoBar
+	return lipgloss.Place(termW, termH, lipgloss.Center, lipgloss.Center, content)
 }
 
 func buildInfoBar(m Model, terminalWidth int) string {
@@ -70,7 +78,7 @@ func buildInfoBar(m Model, terminalWidth int) string {
 	spacerWidth := terminalWidth - lipgloss.Width(actives) - lipgloss.Width(commands)
 	spacer := strings.Repeat(" ", max(0, spacerWidth))
 
-	return lipgloss.JoinHorizontal(lipgloss.Bottom, actives, spacer, commands)
+	return lipgloss.JoinHorizontal(lipgloss.Top, actives, spacer, commands)
 }
 
 func buildOverlay(bg string, menu string, x, y int) string {
