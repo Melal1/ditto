@@ -79,3 +79,26 @@ var keyboardLayouts = map[string]map[string]string{
 		",": ";", ".": ":", "/": "!",
 	},
 }
+
+var shiftMaps = map[string]map[string]string{
+	"qwerty":     usShift,
+	"dvorak":     usShift,
+	"colemak":    usShift,
+	"colemak-dh": usShift,
+	"workman":    usShift,
+	"azerty":     azertyShift,
+}
+
+var usShift = map[string]string{
+	"`": "~", "1": "!", "2": "@", "3": "#", "4": "$",
+	"5": "%", "6": "^", "7": "&", "8": "*", "9": "(", "0": ")",
+	"-": "_", "=": "+", "[": "{", "]": "}", "\\": "|",
+	";": ":", "'": "\"", ",": "<", ".": ">", "/": "?",
+}
+
+var azertyShift = map[string]string{
+	"²": "~", "&": "1", "É": "2", "\"": "3", "'": "4",
+	"(": "5", "-": "6", "È": "7", "_": "8",
+	"Ç": "9", "À": "0", ")": "°",
+	"^": "¨", "$": "£",
+}

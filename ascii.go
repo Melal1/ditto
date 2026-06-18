@@ -5,13 +5,12 @@ import (
 )
 
 func applyLayout(keys []Key, layoutMap map[string]string) []Key {
-	if layoutMap == nil {
-		return keys
-	}
 	result := make([]Key, len(keys))
 	for i, k := range keys {
-		if newLabel, ok := layoutMap[k.Label]; ok {
-			k.Label = newLabel
+		if layoutMap != nil {
+			if newLabel, ok := layoutMap[k.Label]; ok {
+				k.Label = newLabel
+			}
 		}
 		result[i] = k
 	}
@@ -24,6 +23,8 @@ func buildKeyboard(size int, layout string, pressedKeys map[uint16]bool) string 
 		return ""
 	}
 	layoutMap := keyboardLayouts[layout]
+	shiftHeld := pressedKeys[42] || pressedKeys[54]
+	shiftMap := shiftMaps[layout]
 
 	evCodeToLabel := make(map[uint16]string)
 	labelCount := make(map[string]int)
@@ -58,6 +59,13 @@ func buildKeyboard(size int, layout string, pressedKeys map[uint16]bool) string 
 		for j, k := range keys {
 			if pressedByEvCode[k.EvCode] || pressedByLabel[k.Label] {
 				pressed[j] = true
+			}
+		}
+		if shiftHeld && shiftMap != nil {
+			for j := range keys {
+				if newLabel, ok := shiftMap[keys[j].Label]; ok {
+					keys[j].Label = newLabel
+				}
 			}
 		}
 		if i == 0 {
