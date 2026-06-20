@@ -1,48 +1,48 @@
 package main
 
 import (
-	key "charm.land/bubbles/v2/key"
+	bkey "charm.land/bubbles/v2/key"
 )
 
-type CommandMap struct {
-	Layout  key.Binding
-	Size    key.Binding
-	HideKey key.Binding
-	Help    key.Binding
-	Quit    key.Binding
+type bindings struct {
+	Layout  bkey.Binding
+	Size    bkey.Binding
+	HideKey bkey.Binding
+	Help    bkey.Binding
+	Quit    bkey.Binding
 }
 
-func (c CommandMap) ShortHelp() []key.Binding {
-	return []key.Binding{c.Help, c.Quit}
+func (c bindings) ShortHelp() []bkey.Binding {
+	return []bkey.Binding{c.Help, c.Quit}
 }
 
-func (c CommandMap) FullHelp() [][]key.Binding {
-	return [][]key.Binding{
+func (c bindings) FullHelp() [][]bkey.Binding {
+	return [][]bkey.Binding{
+		{c.Size},
+		{c.Layout},
 		{c.HideKey},
-		{c.Size, c.Layout},
-		{c.Help, c.Quit},
 	}
 }
 
-var commands = CommandMap{
-	Layout: key.NewBinding(
-		key.WithKeys("ctrl+shift+l"),
-		key.WithHelp("C-S-l /", "layout"),
+var commands = bindings{
+	Layout: bkey.NewBinding(
+		bkey.WithKeys("ctrl+shift+l"),
+		bkey.WithHelp("^l", "layout"),
 	),
-	Size: key.NewBinding(
-		key.WithKeys("ctrl+shift+s"),
-		key.WithHelp("C-S-s /", "size"),
+	Size: bkey.NewBinding(
+		bkey.WithKeys("ctrl+shift+s"),
+		bkey.WithHelp("^s", "size"),
 	),
-	HideKey: key.NewBinding(
-		key.WithKeys("ctrl+shift+h"),
-		key.WithHelp("C-S-h /", "hide"),
+	HideKey: bkey.NewBinding(
+		bkey.WithKeys("ctrl+shift+h"),
+		bkey.WithHelp("^h", "hide"),
 	),
-	Help: key.NewBinding(
-		key.WithKeys("?"),
-		key.WithHelp("? /", "help"),
+	Help: bkey.NewBinding(
+		bkey.WithKeys("?"),
+		bkey.WithHelp("?", "help"),
 	),
-	Quit: key.NewBinding(
-		key.WithKeys("q", "ctrl+c"),
-		key.WithHelp("q /", "quit"),
+	Quit: bkey.NewBinding(
+		bkey.WithKeys("q", "ctrl+c"),
+		bkey.WithHelp("q", "quit"),
 	),
 }

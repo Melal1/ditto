@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-type Config struct {
+type config struct {
 	ActiveLayout string `json:"active_layout"`
 	ActiveSize   int    `json:"active_size"`
 }
@@ -21,18 +21,18 @@ func configPath() (string, error) {
 	return filepath.Join(cfgDir, configDirName, "config.json"), nil
 }
 
-func loadConfig() Config {
+func loadConfig() config {
 	path, err := configPath()
 	if err != nil {
-		return Config{ActiveLayout: "qwerty", ActiveSize: 75}
+		return config{ActiveLayout: "qwerty", ActiveSize: 75}
 	}
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return Config{ActiveLayout: "qwerty", ActiveSize: 75}
+		return config{ActiveLayout: "qwerty", ActiveSize: 75}
 	}
-	var cfg Config
+	var cfg config
 	if err := json.Unmarshal(data, &cfg); err != nil {
-		return Config{ActiveLayout: "qwerty", ActiveSize: 75}
+		return config{ActiveLayout: "qwerty", ActiveSize: 75}
 	}
 	if cfg.ActiveLayout == "" {
 		cfg.ActiveLayout = "qwerty"
@@ -43,7 +43,7 @@ func loadConfig() Config {
 	return cfg
 }
 
-func saveConfig(cfg Config) {
+func saveConfig(cfg config) {
 	path, err := configPath()
 	if err != nil {
 		return

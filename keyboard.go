@@ -6,10 +6,15 @@ import (
 	evdev "github.com/gvalkov/golang-evdev"
 )
 
-func getKeyboard() (*evdev.InputDevice, error) {
+type globalKeyMsg struct {
+	code uint16
+	down bool
+}
+
+func device() (*evdev.InputDevice, error) {
 	maxEvents := 32
 	for e := range maxEvents {
-		device, err := openDevice(e)
+		device, err := evdev.Open(fmt.Sprintf("/dev/input/event%d", e))
 		if err != nil {
 			continue
 		}
@@ -19,16 +24,7 @@ func getKeyboard() (*evdev.InputDevice, error) {
 		_ = device.File.Close()
 	}
 
-	return nil, fmt.Errorf("no keyboard device found. Try: sudo usermod -aG input $USER. Alternatively, try running the program with sudo")
-}
-
-func openDevice(e int) (*evdev.InputDevice, error) {
-	path := fmt.Sprintf("/dev/input/event%d", e)
-	device, err := evdev.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	return device, nil
+	return nil, fmt.Errorf("no keyboard device found")
 }
 
 func isKeyboardDevice(device *evdev.InputDevice) bool {

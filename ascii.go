@@ -6,29 +6,16 @@ import (
 	ansi "github.com/charmbracelet/x/ansi"
 )
 
-func applyLayout(keys []Key, layoutMap map[string]string) []Key {
-	result := make([]Key, len(keys))
-	for i, k := range keys {
-		if layoutMap != nil {
-			if newLabel, ok := layoutMap[k.Label]; ok {
-				k.Label = newLabel
-			}
-		}
-		result[i] = k
-	}
-	return result
-}
-
-func buildKeyboard(size int, layout string, pressedKeys map[uint16]bool) string {
-	rows, ok := keyboardSizes[size]
+func keyboard(size int, layout string, pressedKeys map[uint16]bool) string {
+	rows, ok := sizes[size]
 	if !ok {
 		return ""
 	}
-	layoutMap := keyboardLayouts[layout]
+	layoutMap := layouts[layout]
 	shiftHeld := pressedKeys[42] || pressedKeys[54]
 	shiftMap := shiftMaps[layout]
 
-	remapped := make([][]Key, len(rows))
+	remapped := make([][]key, len(rows))
 	for i, row := range rows {
 		remapped[i] = applyLayout(row, layoutMap)
 	}
@@ -36,14 +23,14 @@ func buildKeyboard(size int, layout string, pressedKeys map[uint16]bool) string 
 	evCodeToLabel := make(map[uint16]string)
 	for _, row := range rows {
 		for _, k := range row {
-			evCodeToLabel[k.EvCode] = k.Label
+			evCodeToLabel[k.evCode] = k.label
 		}
 	}
 
 	labelCount := make(map[string]int)
 	for _, row := range remapped {
 		for _, k := range row {
-			labelCount[k.Label]++
+			labelCount[k.label]++
 		}
 	}
 
@@ -68,54 +55,67 @@ func buildKeyboard(size int, layout string, pressedKeys map[uint16]bool) string 
 	for i, keys := range remapped {
 		pressed := make([]bool, len(keys))
 		for j, k := range keys {
-			if pressedByEvCode[k.EvCode] || pressedByLabel[k.Label] {
+			if pressedByEvCode[k.evCode] || pressedByLabel[k.label] {
 				pressed[j] = true
 			}
 		}
 		if shiftHeld && shiftMap != nil {
 			for j := range keys {
-				if newLabel, ok := shiftMap[keys[j].Label]; ok {
-					keys[j].Label = newLabel
+				if newLabel, ok := shiftMap[keys[j].label]; ok {
+					keys[j].label = newLabel
 				}
 			}
 		}
 		if i == 0 {
-			lines = append(lines, buildTopLine(keys))
+			lines = append(lines, topLine(keys))
 		}
-		lines = append(lines, buildMidLine(keys, pressed))
+		lines = append(lines, midLine(keys, pressed))
 		if i < len(remapped)-1 {
-			lines = append(lines, buildDivLine(keys))
+			lines = append(lines, divLine(keys))
 		} else {
-			lines = append(lines, buildBotLine(keys))
+			lines = append(lines, botLine(keys))
 		}
 	}
 	return strings.Join(lines, "\n")
 }
 
-func buildTopLine(keys []Key) string {
+func applyLayout(keys []key, layoutMap map[string]string) []key {
+	result := make([]key, len(keys))
+	for i, k := range keys {
+		if layoutMap != nil {
+			if newLabel, ok := layoutMap[k.label]; ok {
+				k.label = newLabel
+			}
+		}
+		result[i] = k
+	}
+	return result
+}
+
+func topLine(keys []key) string {
 	var b strings.Builder
 	b.WriteByte(',')
 	for _, k := range keys {
-		b.WriteString(strings.Repeat("-", k.Width))
+		b.WriteString(strings.Repeat("-", k.width))
 		b.WriteByte(',')
 	}
 	return b.String()
 }
 
-func buildMidLine(keys []Key, pressed []bool) string {
+func midLine(keys []key, pressed []bool) string {
 	var b strings.Builder
 	b.WriteByte('|')
 	for i, k := range keys {
-		label := k.Label
-		if k.DivLabel != "" {
+		label := k.label
+		if k.divLabel != "" {
 			label = ""
 		}
 		if i < len(pressed) && pressed[i] {
-			b.WriteString(fingerActive[k.Finger].Render(centerLabel(label, k.Width)))
+			b.WriteString(fingerActive[k.finger].Render(centerLabel(label, k.width)))
 		} else {
-			b.WriteString(fingerStyle[k.Finger].Render(centerLabel(label, k.Width)))
+			b.WriteString(fingerStyle[k.finger].Render(centerLabel(label, k.width)))
 		}
-		if k.Rightless {
+		if k.rightless {
 			b.WriteByte(' ')
 			continue
 		}
@@ -124,25 +124,25 @@ func buildMidLine(keys []Key, pressed []bool) string {
 	return b.String()
 }
 
-func buildDivLine(keys []Key) string {
+func divLine(keys []key) string {
 	var b strings.Builder
 	b.WriteByte('|')
 	for _, k := range keys {
-		if k.Gap {
-			if k.DivLabel != "" {
-				b.WriteString(fingerStyle[k.Finger].Render(centerLabel(k.DivLabel, k.Width)))
+		if k.gap {
+			if k.divLabel != "" {
+				b.WriteString(fingerStyle[k.finger].Render(centerLabel(k.divLabel, k.width)))
 			} else {
-				b.WriteString(strings.Repeat(" ", k.Width))
+				b.WriteString(strings.Repeat(" ", k.width))
 			}
-			if k.Rightless {
+			if k.rightless {
 				b.WriteByte(',')
 			} else {
 				b.WriteByte('\'')
 			}
 			continue
 		}
-		b.WriteString(strings.Repeat("-", k.Width))
-		if k.Leftless {
+		b.WriteString(strings.Repeat("-", k.width))
+		if k.leftless {
 			b.WriteByte(',')
 		} else {
 			b.WriteByte('\'')
@@ -151,12 +151,12 @@ func buildDivLine(keys []Key) string {
 	return b.String()
 }
 
-func buildBotLine(keys []Key) string {
+func botLine(keys []key) string {
 	var b strings.Builder
 	b.WriteByte('\'')
 	for _, k := range keys {
-		b.WriteString(strings.Repeat("-", k.Width))
-		if k.Leftless {
+		b.WriteString(strings.Repeat("-", k.width))
+		if k.leftless {
 			b.WriteByte(',')
 		} else {
 			b.WriteByte('\'')

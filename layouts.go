@@ -1,6 +1,6 @@
 package main
 
-var keyboardLayouts = map[string]map[string]string{
+var layouts = map[string]map[string]string{
 	"qwerty": nil,
 
 	"dvorak": {
