@@ -51,16 +51,25 @@ func base(m Model) string {
 	}
 
 	kb := keyboard(m.activeSize, m.activeLayout, m.pressedKeys)
+	kh := strings.Count(kb, "\n") + 1
 	kw := 0
-
-	if !m.showAllInfo {
-		return lipgloss.Place(tw, th, lipgloss.Center, lipgloss.Center, kb)
-	}
-
 	for line := range strings.SplitSeq(kb, "\n") {
 		if w := lipgloss.Width(line); w > kw {
 			kw = w
 		}
+	}
+
+	neededH, neededW := kh, kw
+	if m.showAllInfo {
+		neededH += 4
+	}
+
+	if th < neededH || tw < neededW {
+		return warning(tw, th, neededW, neededH)
+	}
+
+	if !m.showAllInfo {
+		return lipgloss.Place(tw, th, lipgloss.Center, lipgloss.Center, kb)
 	}
 
 	bar := statusBar(m, kw)
@@ -68,6 +77,16 @@ func base(m Model) string {
 	content := leg + "\n" + kb + "\n" + bar
 
 	return lipgloss.Place(tw, th, lipgloss.Center, lipgloss.Center, content)
+}
+
+func warning(tw, th, nw, nh int) string {
+	header := lipgloss.NewStyle().Foreground(quitColor).Render("Terminal size too small:")
+	size := warningStyle.Render(fmt.Sprintf("Width = %d  Height = %d", tw, th))
+	need := warningAccent.Render("Needed for current config:")
+	needSize := warningStyle.Render(fmt.Sprintf("Width = %d  Height = %d", nw, nh))
+
+	lines := []string{header, size, "", need, needSize}
+	return lipgloss.Place(tw, th, lipgloss.Center, lipgloss.Center, strings.Join(lines, "\n"))
 }
 
 func legends(width int) string {

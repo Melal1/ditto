@@ -16,6 +16,8 @@ var (
 	statusBarStyle  lipgloss.Style
 	fingerStyle     map[finger]lipgloss.Style
 	fingerActive    map[finger]lipgloss.Style
+	warningStyle    lipgloss.Style
+	warningAccent   lipgloss.Style
 )
 
 var keyboardBorder = lipgloss.Border{
@@ -89,7 +91,11 @@ func init() {
 
 	if isDark {
 		statusBarStyle = lipgloss.NewStyle().Foreground(lipgloss.BrightBlack)
+		warningAccent = lipgloss.NewStyle().Foreground(lipgloss.BrightGreen)
 	} else {
 		statusBarStyle = lipgloss.NewStyle().Faint(true)
+		warningAccent = lipgloss.NewStyle().Foreground(lipgloss.Green)
 	}
+
+	warningStyle = lipgloss.NewStyle()
 }
