@@ -104,22 +104,42 @@ func topLine(keys []key) string {
 
 func midLine(keys []key, pressed []bool) string {
 	var b strings.Builder
-	b.WriteByte('|')
 	for i, k := range keys {
 		label := k.label
 		if k.divLabel != "" {
 			label = ""
 		}
-		if i < len(pressed) && pressed[i] {
+
+		isPressed := i < len(pressed) && pressed[i]
+
+		if i == 0 {
+			if isPressed {
+				b.WriteString(fingerActive[k.finger].Render("|"))
+			} else {
+				b.WriteByte('|')
+			}
+		}
+
+		if isPressed {
 			b.WriteString(fingerActive[k.finger].Render(centerLabel(label, k.width)))
 		} else {
 			b.WriteString(fingerStyle[k.finger].Render(centerLabel(label, k.width)))
 		}
+
 		if k.rightless {
 			b.WriteByte(' ')
-			continue
+		} else {
+			nextPressed := i+1 < len(pressed) && pressed[i+1]
+			if isPressed || nextPressed {
+				f := k.finger
+				if nextPressed && !isPressed {
+					f = keys[i+1].finger
+				}
+				b.WriteString(fingerActive[f].Render("|"))
+			} else {
+				b.WriteByte('|')
+			}
 		}
-		b.WriteByte('|')
 	}
 	return b.String()
 }
