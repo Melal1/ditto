@@ -50,7 +50,7 @@ func printDeviceError(err error) {
 
 	exe, exeErr := os.Executable()
 	if exeErr != nil {
-		exe = "qwerty"
+		exe = "ditto"
 	}
 
 	fmt.Fprintf(os.Stderr, `

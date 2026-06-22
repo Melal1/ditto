@@ -11,7 +11,7 @@ type config struct {
 	ActiveSize   int    `json:"active_size"`
 }
 
-const configDirName = "qwerty-keyboard"
+const configDirName = "ditto"
 
 func configPath() (string, error) {
 	cfgDir, err := os.UserConfigDir()

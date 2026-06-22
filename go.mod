@@ -1,4 +1,4 @@
-module github.com/arvingarciabtw/qwerty
+module github.com/arvingarciabtw/ditto
 
 go 1.26.2
 
