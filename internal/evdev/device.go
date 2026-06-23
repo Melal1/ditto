@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -114,10 +115,8 @@ func CheckInputGroup() error {
 	if err != nil {
 		return err
 	}
-	for _, g := range groups {
-		if g == gid {
-			return nil
-		}
+	if slices.Contains(groups, gid) {
+		return nil
 	}
 	return fmt.Errorf("user is not in the input group")
 }
