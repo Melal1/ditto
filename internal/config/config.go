@@ -6,11 +6,14 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+
+	"github.com/arvingarciabtw/ditto/internal/keyboard"
 )
 
 type Config struct {
-	ActiveLayout string `json:"active_layout"`
-	ActiveSize   int    `json:"active_size"`
+	ActiveLayout   string          `json:"active_layout"`
+	ActiveSize     int             `json:"active_size"`
+	ActiveStandard keyboard.Standard `json:"active_standard"`
 }
 
 const DirName = "ditto"

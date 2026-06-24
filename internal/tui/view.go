@@ -53,7 +53,7 @@ func base(m Model) string {
 		return ""
 	}
 
-	kb := keyboard.Keyboard(m.activeSize, m.activeLayout, m.pressedKeys, FingerStyle, FingerActive)
+	kb := keyboard.Render(m.activeLayout, m.activeSize, m.activeStandard, m.pressedKeys, FingerStyle, FingerActive)
 	kh := strings.Count(kb, "\n") + 1
 	kw := 0
 	for line := range strings.SplitSeq(kb, "\n") {
@@ -75,9 +75,9 @@ func base(m Model) string {
 		return lipgloss.Place(tw, th, lipgloss.Center, lipgloss.Center, kb)
 	}
 
+	top := topBar(m, kw)
 	bar := statusBar(m, kw)
-	leg := legends(kw)
-	content := leg + "\n" + kb + "\n" + bar
+	content := top + "\n" + kb + "\n" + bar
 
 	return lipgloss.Place(tw, th, lipgloss.Center, lipgloss.Center, content)
 }
@@ -92,7 +92,7 @@ func warning(tw, th, nw, nh int) string {
 	return lipgloss.Place(tw, th, lipgloss.Center, lipgloss.Center, strings.Join(lines, "\n"))
 }
 
-func legends(width int) string {
+func topBar(m Model, width int) string {
 	type legend struct {
 		name  string
 		style lipgloss.Style
@@ -113,19 +113,25 @@ func legends(width int) string {
 	for _, legend := range items {
 		fmt.Fprintf(&sb, "%s %s ", legend.style.Render(symbol), StatusBarStyle.Render(legend.name))
 	}
-	s := sb.String()
+	legends := sb.String()
 
-	sw := width - lipgloss.Width(s)
+	standardLabel := "ansi"
+	if m.activeStandard == keyboard.ISO {
+		standardLabel = "iso"
+	}
+	std := StatusBarStyle.Render(standardLabel)
+
+	sw := width - lipgloss.Width(legends) - lipgloss.Width(std)
 	spacer := strings.Repeat(" ", max(0, sw))
 
-	return lipgloss.JoinHorizontal(lipgloss.Bottom, s, spacer)
+	return lipgloss.JoinHorizontal(lipgloss.Bottom, std, spacer, legends)
 }
 
 func statusBar(m Model, width int) string {
 	size := StatusBarStyle.Render(fmt.Sprintf("%d%%", m.activeSize))
-	layout := StatusBarStyle.Render(" •︎", m.activeLayout)
+	layout := StatusBarStyle.Render(" •︎ " + m.activeLayout)
 
-	actives := lipgloss.JoinHorizontal(lipgloss.Bottom, size, "", layout)
+	actives := lipgloss.JoinHorizontal(lipgloss.Bottom, size, layout)
 	bindings := renderBindings(components.Commands)
 
 	sw := width - lipgloss.Width(actives) - lipgloss.Width(bindings)
@@ -138,6 +144,7 @@ func renderBindings(c components.Bindings) string {
 	parts := []string{
 		StatusBarStyle.Render(c.Layout.Help().Key) + " " + StatusBarStyle.Render(c.Layout.Help().Desc),
 		StatusBarStyle.Render(c.Size.Help().Key) + " " + StatusBarStyle.Render(c.Size.Help().Desc),
+		StatusBarStyle.Render(c.Standard.Help().Key) + " " + StatusBarStyle.Render(c.Standard.Help().Desc),
 		StatusBarStyle.Render(c.HideKey.Help().Key) + " " + StatusBarStyle.Render(c.HideKey.Help().Desc),
 	}
 	return strings.Join(parts, "  ")

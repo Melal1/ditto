@@ -19,6 +19,22 @@ var layouts = map[string]map[string]string{
 		",": "W", ".": "V", "/": "Z",
 	},
 
+	"dvorak uk": {
+		"-": "[", "=": "]",
+
+		"Q": "'", "W": ",", "E": ".", "R": "P", "T": "Y",
+		"Y": "F", "U": "G", "I": "C", "O": "R", "P": "L",
+		"[": "/", "]": "=",
+
+		"A": "A", "S": "O", "D": "E", "F": "U", "G": "I",
+		"H": "D", "J": "H", "K": "T", "L": "N",
+		";": "S", "'": "-",
+
+		"Z": ";", "X": "Q", "C": "J", "V": "K",
+		"B": "X", "N": "B", "M": "M",
+		",": "W", ".": "V", "/": "Z",
+	},
+
 	"colemak": {
 		"Caps": "<--",
 
@@ -59,6 +75,8 @@ var layouts = map[string]map[string]string{
 		"B": "V", "N": "K", "M": "L",
 	},
 
+	"qwerty uk": nil,
+
 	"azerty": {
 		"`": "²",
 
@@ -82,11 +100,18 @@ var layouts = map[string]map[string]string{
 
 var shiftMaps = map[string]map[string]string{
 	"qwerty":     usShift,
+	"qwerty uk":  ukShift,
 	"dvorak":     usShift,
+	"dvorak uk":  ukShift,
 	"colemak":    usShift,
 	"colemak-dh": usShift,
 	"workman":    usShift,
 	"azerty":     azertyShift,
+}
+
+var altGrMaps = map[string]map[string]string{
+	"qwerty uk": ukAltGr,
+	"dvorak uk": ukAltGr,
 }
 
 var usShift = map[string]string{
@@ -96,6 +121,14 @@ var usShift = map[string]string{
 	";": ":", "'": "\"", ",": "<", ".": ">", "/": "?",
 }
 
+var ukShift = map[string]string{
+	"`": "¬", "1": "!", "2": "\"", "3": "£", "4": "$",
+	"5": "%", "6": "^", "7": "&", "8": "*", "9": "(", "0": ")",
+	"-": "_", "=": "+", "[": "{", "]": "}", "\\": "|",
+	";": ":", "'": "@", ",": "<", ".": ">", "/": "?",
+	"#": "~",
+}
+
 var azertyShift = map[string]string{
 	"²": "~", "&": "1", "É": "2", "\"": "3", "'": "4",
 	"(": "5", "-": "6", "È": "7", "_": "8",
@@ -103,9 +136,17 @@ var azertyShift = map[string]string{
 	"^": "¨", "$": "£",
 }
 
+var ukAltGr = map[string]string{
+	"4": "€",
+	"`": "¦",
+	"A": "Á", "E": "É", "I": "Í", "O": "Ó", "U": "Ú",
+}
+
 var BuiltinLayoutNames = []string{
 	"qwerty",
+	"qwerty uk",
 	"dvorak",
+	"dvorak uk",
 	"colemak",
 	"colemak-dh",
 	"workman",

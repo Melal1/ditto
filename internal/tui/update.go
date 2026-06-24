@@ -8,6 +8,7 @@ import (
 
 	"github.com/arvingarciabtw/ditto/internal/config"
 	"github.com/arvingarciabtw/ditto/internal/evdev"
+	"github.com/arvingarciabtw/ditto/internal/keyboard"
 	"github.com/arvingarciabtw/ditto/internal/tui/components"
 )
 
@@ -27,6 +28,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+shift+s":
 			m.showSizeList = !m.showSizeList
 			m.showLayoutList = false
+			return m, nil
+		case "ctrl+shift+d":
+			if m.activeStandard == keyboard.ANSI {
+				m.activeStandard = keyboard.ISO
+			} else {
+				m.activeStandard = keyboard.ANSI
+			}
+			config.SaveConfig(config.Config{ActiveLayout: m.activeLayout, ActiveSize: m.activeSize, ActiveStandard: m.activeStandard})
 			return m, nil
 		}
 
@@ -58,8 +67,11 @@ func (m Model) handleLayoutListUpdate(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) 
 
 	case components.ListConfirm:
 		m.activeLayout = strings.ToLower(m.layoutList.Items[m.layoutList.Selected])
+		if strings.HasSuffix(m.activeLayout, " uk") {
+			m.activeStandard = keyboard.ISO
+		}
 		m.showLayoutList = false
-		config.SaveConfig(config.Config{ActiveLayout: m.activeLayout, ActiveSize: m.activeSize})
+		config.SaveConfig(config.Config{ActiveLayout: m.activeLayout, ActiveSize: m.activeSize, ActiveStandard: m.activeStandard})
 	case components.ListCancel:
 		m.showLayoutList = false
 	}
@@ -79,7 +91,7 @@ func (m Model) handleSizeListUpdate(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 			m.activeSize = size
 		}
 		m.showSizeList = false
-		config.SaveConfig(config.Config{ActiveLayout: m.activeLayout, ActiveSize: m.activeSize})
+		config.SaveConfig(config.Config{ActiveLayout: m.activeLayout, ActiveSize: m.activeSize, ActiveStandard: m.activeStandard})
 	case components.ListCancel:
 		m.showSizeList = false
 	}

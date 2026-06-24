@@ -5,9 +5,10 @@ import (
 )
 
 type Bindings struct {
-	Layout  bkey.Binding
-	Size    bkey.Binding
-	HideKey bkey.Binding
+	Layout   bkey.Binding
+	Size     bkey.Binding
+	Standard bkey.Binding
+	HideKey  bkey.Binding
 }
 
 var Commands = Bindings{
@@ -18,6 +19,10 @@ var Commands = Bindings{
 	Size: bkey.NewBinding(
 		bkey.WithKeys("ctrl+shift+s"),
 		bkey.WithHelp("^s", "size"),
+	),
+	Standard: bkey.NewBinding(
+		bkey.WithKeys("ctrl+shift+d"),
+		bkey.WithHelp("^d", "standard"),
 	),
 	HideKey: bkey.NewBinding(
 		bkey.WithKeys("ctrl+shift+h"),

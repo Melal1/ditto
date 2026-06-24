@@ -9,14 +9,20 @@ import (
 	ansi "github.com/charmbracelet/x/ansi"
 )
 
-func Keyboard(size int, layout string, pressedKeys map[uint16]bool, fingerStyle, fingerActive map[Finger]lipgloss.Style) string {
-	rows, ok := sizes[size]
+func Render(layout string, size int, standard Standard, pressedKeys map[uint16]bool, fingerStyle, fingerActive map[Finger]lipgloss.Style) string {
+	keyboardSizes := sizes
+	if standard == ISO {
+		keyboardSizes = sizesISO
+	}
+	rows, ok := keyboardSizes[size]
 	if !ok {
 		return ""
 	}
 	layoutMap := layouts[layout]
 	shiftHeld := pressedKeys[42] || pressedKeys[54]
 	shiftMap := shiftMaps[layout]
+	altGrHeld := pressedKeys[100]
+	altGrMap := altGrMaps[layout]
 
 	remapped := make([][]key, len(rows))
 	for i, row := range rows {
@@ -37,10 +43,21 @@ func Keyboard(size int, layout string, pressedKeys map[uint16]bool, fingerStyle,
 		}
 	}
 
+	evCodeCount := make(map[uint16]int)
+	for _, row := range rows {
+		for _, k := range row {
+			evCodeCount[k.evCode]++
+		}
+	}
+
 	pressedByEvCode := make(map[uint16]bool)
 	pressedByLabel := make(map[string]bool)
 	for code, down := range pressedKeys {
 		if !down {
+			continue
+		}
+		if evCodeCount[code] > 1 {
+			pressedByEvCode[code] = true
 			continue
 		}
 		label, ok := evCodeToOrigLabel[code]
@@ -66,7 +83,18 @@ func Keyboard(size int, layout string, pressedKeys map[uint16]bool, fingerStyle,
 				pressed[j] = true
 			}
 		}
-		if shiftHeld && shiftMap != nil {
+		if altGrHeld && altGrMap != nil {
+			for j := range keys {
+				if newLabel, ok := altGrMap[keys[j].label]; ok {
+					keys[j].label = newLabel
+				}
+			}
+			if shiftHeld {
+				for j := range keys {
+					keys[j].label = strings.ToUpper(keys[j].label)
+				}
+			}
+		} else if shiftHeld && shiftMap != nil {
 			for j := range keys {
 				if newLabel, ok := shiftMap[keys[j].label]; ok {
 					keys[j].label = newLabel

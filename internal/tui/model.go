@@ -13,6 +13,7 @@ import (
 type Model struct {
 	activeLayout   string
 	activeSize     int
+	activeStandard keyboard.Standard
 	layoutList     components.ListModel
 	sizeList       components.ListModel
 	quitDialog     components.DialogModel
@@ -60,6 +61,7 @@ func InitModel() Model {
 		quitDialog:     components.DialogModel{AccentColor: QuitColor},
 		activeLayout:   cfg.ActiveLayout,
 		activeSize:     cfg.ActiveSize,
+		activeStandard:      cfg.ActiveStandard,
 		showLayoutList: false,
 		showSizeList:   false,
 		showAllInfo:    true,
