@@ -155,7 +155,7 @@ func TestRender_size60_startsWithComma(t *testing.T) {
 
 func TestRender_allSizesRender(t *testing.T) {
 	fs, fa := emptyStyles()
-	for size := range sizes {
+	for size := range sizesANSI {
 		got := Render("qwerty", size, "ansi", nil, fs, fa)
 		if got == "" {
 			t.Errorf("size %d produced empty output", size)
@@ -199,7 +199,7 @@ func TestRender_size80_hasGaps(t *testing.T) {
 
 func TestRender_Standard_allSizesDistinct(t *testing.T) {
 	fs, fa := emptyStyles()
-	for size := range sizes {
+	for size := range sizesANSI {
 		ansi := Render("qwerty", size, "ansi", nil, fs, fa)
 		std := Render("qwerty", size, "iso", nil, fs, fa)
 		if ansi == std {

@@ -99,14 +99,9 @@ var layouts = map[string]map[string]string{
 }
 
 var shiftMaps = map[string]map[string]string{
-	"qwerty":     usShift,
-	"qwerty uk":  ukShift,
-	"dvorak":     usShift,
-	"dvorak uk":  ukShift,
-	"colemak":    usShift,
-	"colemak-dh": usShift,
-	"workman":    usShift,
-	"azerty":     azertyShift,
+	"qwerty uk": ukShift,
+	"dvorak uk": ukShift,
+	"azerty":    azertyShift,
 }
 
 var altGrMaps = map[string]map[string]string{
@@ -136,10 +131,26 @@ var azertyShift = map[string]string{
 	"^": "¨", "$": "£",
 }
 
+var abntShift = map[string]string{
+	"'": "\"", "1": "!", "2": "@", "3": "#", "4": "$",
+	"5": "%", "6": "¨", "7": "&", "8": "*", "9": "(", "0": ")", "´": "`",
+	"-": "_", "=": "+", "~": "^",
+	"[": "{", "]": "}", "\\": "|",
+	";": ":", ",": "<", ".": ">", "/": "?",
+}
+
 var ukAltGr = map[string]string{
 	"4": "€",
 	"`": "¦",
 	"A": "Á", "E": "É", "I": "Í", "O": "Ó", "U": "Ú",
+}
+
+var abntAltGr = map[string]string{
+	"1": "¹", "2": "²", "3": "³", "=": "§",
+	"4": "£", "5": "¢", "6": "¬",
+	"Q": "/", "W": "?", "E": "€",
+	"[": "ª", "]": "º",
+	"C": "₢",
 }
 
 var BuiltinLayoutNames = []string{

@@ -12,6 +12,7 @@ import evdev "github.com/gvalkov/golang-evdev"
 * https://www.minimaldesksetups.com/mechanical-keyboard-keycap-guide/
  */
 const (
+	u0_75 = 2
 	u1    = 3
 	u1_50 = 4
 	u1_75 = 5
@@ -124,6 +125,7 @@ var (
 	keyDot        = key{label: ".", width: u1, finger: Ring, evCode: evdev.KEY_DOT}
 	keySlash      = key{label: "/", width: u1, finger: Pinky, evCode: evdev.KEY_SLASH}
 	keyPound      = key{label: "#", width: u1, finger: Pinky, evCode: evdev.KEY_NUMERIC_POUND}
+	keyAcute      = key{label: "´", width: u1, finger: Pinky, evCode: evdev.KEY_RESERVED}
 
 	// SYSTEM COMMAND KEYS
 	keyPrintScreen = key{label: "Prt", width: u1, finger: Index, evCode: evdev.KEY_SYSRQ}
@@ -150,9 +152,11 @@ var (
 	keyPadEnter    = key{label: "", width: u1, finger: Pinky, gap: true, divLabel: "↵", evCode: evdev.KEY_KPENTER}
 
 	// MISC
-	keyBlank         = key{label: "", width: 2, finger: Any, evCode: evdev.KEY_RESERVED}
+	keyBlank         = key{label: "", width: u0_75, finger: Any, evCode: evdev.KEY_RESERVED}
 	keyEnterISO      = key{label: "Ent", width: u1_75, finger: Pinky, evCode: evdev.KEY_ENTER, gap: true}
 	keyEnterISOBlank = key{label: "", width: u1_50, finger: keyEnterISO.finger, evCode: keyEnterISO.evCode}
 	keyLeftShiftISO  = key{label: "Shft", width: u1_50, finger: keyLeftShift.finger, evCode: keyLeftShift.evCode}
 	keyRightShiftISO = key{label: "Shft", width: u2, finger: keyRightShift.finger, evCode: keyRightShift.evCode}
+	keyCedilla       = key{label: "Ç", width: u1, finger: Pinky, evCode: evdev.KEY_RESERVED}
+	keyTilde         = key{label: "~", width: u1, finger: Pinky, evCode: evdev.KEY_RESERVED}
 )

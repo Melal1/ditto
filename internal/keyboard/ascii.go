@@ -10,25 +10,57 @@ import (
 )
 
 func Render(layout string, size int, standard string, pressedKeys map[uint16]bool, fingerStyle, fingerActive map[Finger]lipgloss.Style) string {
-	keyboardSizes := sizes
-	if standard == "iso" {
-		keyboardSizes = sizesISO
-	}
-	rows, ok := keyboardSizes[size]
+	sd, ok := resolveStandard(standard)
 	if !ok {
 		return ""
 	}
-	layoutMap := layouts[layout]
-	shiftHeld := pressedKeys[42] || pressedKeys[54]
-	shiftMap := shiftMaps[layout]
-	altGrHeld := pressedKeys[100]
-	altGrMap := altGrMaps[layout]
+	rows, ok := sd.sizes[size]
+	if !ok {
+		return ""
+	}
 
+	layoutMap := layouts[layout]
 	remapped := make([][]key, len(rows))
 	for i, row := range rows {
 		remapped[i] = applyLayout(row, layoutMap)
 	}
 
+	shiftHeld := pressedKeys[42] || pressedKeys[54]
+	altGrHeld := pressedKeys[100]
+
+	shiftMap := sd.shiftMap
+	if lm, ok := shiftMaps[layout]; ok {
+		shiftMap = lm
+	}
+	altGrMap := sd.altGrMap
+	if am, ok := altGrMaps[layout]; ok {
+		altGrMap = am
+	}
+
+	pressed := resolvePressed(rows, remapped, pressedKeys)
+	applyModifiers(remapped, shiftHeld, shiftMap, altGrHeld, altGrMap)
+	return renderKeys(remapped, pressed, fingerStyle, fingerActive)
+}
+
+func applyLayout(keys []key, layoutMap map[string]string) []key {
+	result := make([]key, len(keys))
+	for i, k := range keys {
+		if layoutMap != nil {
+			if newLabel, ok := layoutMap[k.label]; ok {
+				k.label = newLabel
+			}
+		}
+		result[i] = k
+	}
+	return result
+}
+
+func resolveStandard(standard string) (standardData, bool) {
+	sd, ok := standards[standard]
+	return sd, ok
+}
+
+func resolvePressed(rows, remapped [][]key, pressedKeys map[uint16]bool) [][]bool {
 	evCodeToOrigLabel := make(map[uint16]string)
 	for _, row := range rows {
 		for _, k := range row {
@@ -75,56 +107,55 @@ func Render(layout string, size int, standard string, pressedKeys map[uint16]boo
 		}
 	}
 
-	var lines []string
+	pressed := make([][]bool, len(remapped))
 	for i, keys := range remapped {
-		pressed := make([]bool, len(keys))
+		pressed[i] = make([]bool, len(keys))
 		for j, k := range keys {
 			if pressedByEvCode[k.evCode] || pressedByLabel[k.label] {
-				pressed[j] = true
+				pressed[i][j] = true
 			}
 		}
+	}
+	return pressed
+}
+
+func applyModifiers(keys [][]key, shiftHeld bool, shiftMap map[string]string, altGrHeld bool, altGrMap map[string]string) {
+	for _, row := range keys {
 		if altGrHeld && altGrMap != nil {
-			for j := range keys {
-				if newLabel, ok := altGrMap[keys[j].label]; ok {
-					keys[j].label = newLabel
+			for j := range row {
+				if newLabel, ok := altGrMap[row[j].label]; ok {
+					row[j].label = newLabel
 				}
 			}
 			if shiftHeld {
-				for j := range keys {
-					keys[j].label = strings.ToUpper(keys[j].label)
+				for j := range row {
+					row[j].label = strings.ToUpper(row[j].label)
 				}
 			}
 		} else if shiftHeld && shiftMap != nil {
-			for j := range keys {
-				if newLabel, ok := shiftMap[keys[j].label]; ok {
-					keys[j].label = newLabel
+			for j := range row {
+				if newLabel, ok := shiftMap[row[j].label]; ok {
+					row[j].label = newLabel
 				}
 			}
 		}
+	}
+}
+
+func renderKeys(keys [][]key, pressed [][]bool, fingerStyle, fingerActive map[Finger]lipgloss.Style) string {
+	var lines []string
+	for i, kr := range keys {
 		if i == 0 {
-			lines = append(lines, topLine(keys))
+			lines = append(lines, topLine(kr))
 		}
-		lines = append(lines, midLine(keys, pressed, fingerStyle, fingerActive))
-		if i < len(remapped)-1 {
-			lines = append(lines, divLine(keys, fingerStyle))
+		lines = append(lines, midLine(kr, pressed[i], fingerStyle, fingerActive))
+		if i < len(keys)-1 {
+			lines = append(lines, divLine(kr, fingerStyle))
 		} else {
-			lines = append(lines, botLine(keys))
+			lines = append(lines, botLine(kr))
 		}
 	}
 	return strings.Join(lines, "\n")
-}
-
-func applyLayout(keys []key, layoutMap map[string]string) []key {
-	result := make([]key, len(keys))
-	for i, k := range keys {
-		if layoutMap != nil {
-			if newLabel, ok := layoutMap[k.label]; ok {
-				k.label = newLabel
-			}
-		}
-		result[i] = k
-	}
-	return result
 }
 
 func topLine(keys []key) string {
