@@ -12,6 +12,8 @@ type Config struct {
 	ActiveLayout   string `json:"active_layout"`
 	ActiveSize     int    `json:"active_size"`
 	ActiveStandard string `json:"active_standard"`
+	Locked         bool   `json:"locked"`
+	ShowAllInfo    *bool  `json:"show_all_info,omitempty"`
 }
 
 const DirName = "ditto"
@@ -24,27 +26,31 @@ func configPath() (string, error) {
 	return filepath.Join(cfgDir, DirName, "config.json"), nil
 }
 
+func Default() Config {
+	return Config{ActiveLayout: "qwerty", ActiveSize: 75, ActiveStandard: "ansi"}
+}
+
 func LoadConfig() Config {
 	path, err := configPath()
 	if err != nil {
-		return Config{ActiveLayout: "qwerty", ActiveSize: 75, ActiveStandard: "ansi"}
+		return Default()
 	}
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return Config{ActiveLayout: "qwerty", ActiveSize: 75, ActiveStandard: "ansi"}
+		return Default()
 	}
 	var cfg Config
 	if err := json.Unmarshal(data, &cfg); err != nil {
-		return Config{ActiveLayout: "qwerty", ActiveSize: 75, ActiveStandard: "ansi"}
+		return Default()
 	}
 	if cfg.ActiveLayout == "" {
-		cfg.ActiveLayout = "qwerty"
+		cfg.ActiveLayout = Default().ActiveLayout
 	}
 	if cfg.ActiveSize == 0 {
-		cfg.ActiveSize = 75
+		cfg.ActiveSize = Default().ActiveSize
 	}
 	if cfg.ActiveStandard == "" {
-		cfg.ActiveStandard = "ansi"
+		cfg.ActiveStandard = Default().ActiveStandard
 	}
 	return cfg
 }

@@ -6,13 +6,14 @@ import (
 	tea "charm.land/bubbletea/v2"
 	evdevlib "github.com/gvalkov/golang-evdev"
 
+	"github.com/arvingarciabtw/ditto/internal/config"
 	"github.com/arvingarciabtw/ditto/internal/evdev"
 )
 
 func testModel(t *testing.T) Model {
 	t.Helper()
 	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
-	return InitModel()
+	return InitModel(config.Default())
 }
 
 func TestModel_init(t *testing.T) {
@@ -168,5 +169,46 @@ func TestModel_escClosesOverlay(t *testing.T) {
 	m = result.(Model)
 	if m.showLayoutList {
 		t.Error("expected layoutList overlay to close on esc")
+	}
+}
+
+func TestModel_locked_blocksL(t *testing.T) {
+	m := testModel(t)
+	m.locked = true
+	result, _ := m.Update(tea.KeyPressMsg{Code: 'l'})
+	m = result.(Model)
+	if m.showLayoutList {
+		t.Error("expected showLayoutList to be false when locked")
+	}
+}
+
+func TestModel_locked_blocksS(t *testing.T) {
+	m := testModel(t)
+	m.locked = true
+	result, _ := m.Update(tea.KeyPressMsg{Code: 's'})
+	m = result.(Model)
+	if m.showSizeList {
+		t.Error("expected showSizeList to be false when locked")
+	}
+}
+
+func TestModel_locked_blocksC(t *testing.T) {
+	m := testModel(t)
+	m.locked = true
+	m.activeStandard = "jis"
+	result, _ := m.Update(tea.KeyPressMsg{Code: 'c'})
+	m = result.(Model)
+	if m.kanaActive {
+		t.Error("expected kanaActive to be false when locked")
+	}
+}
+
+func TestModel_locked_blocksH(t *testing.T) {
+	m := testModel(t)
+	m.locked = true
+	result, _ := m.Update(tea.KeyPressMsg{Code: 'h'})
+	m = result.(Model)
+	if !m.showAllInfo {
+		t.Error("expected showAllInfo to stay true when locked")
 	}
 }

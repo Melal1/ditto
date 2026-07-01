@@ -14,6 +14,7 @@ type Model struct {
 	activeLayout     string
 	activeSize       int
 	activeStandard   string
+	locked           bool
 	layoutList       components.ListModel
 	sizeList         components.ListModel
 	standardList     components.ListModel
@@ -33,9 +34,7 @@ type Model struct {
 	terminalHeight   int
 }
 
-func InitModel() Model {
-	cfg := config.LoadConfig()
-
+func InitModel(cfg config.Config) Model {
 	layoutList := components.ListModel{
 		Items:        keyboard.LayoutListItems,
 		Selected:     0,
@@ -78,6 +77,11 @@ func InitModel() Model {
 		}
 	}
 
+	showAllInfo := true
+	if cfg.ShowAllInfo != nil {
+		showAllInfo = *cfg.ShowAllInfo
+	}
+
 	return Model{
 		layoutList:       layoutList,
 		sizeList:         sizeList,
@@ -86,10 +90,22 @@ func InitModel() Model {
 		activeLayout:     cfg.ActiveLayout,
 		activeSize:       cfg.ActiveSize,
 		activeStandard:   cfg.ActiveStandard,
+		locked:           cfg.Locked,
 		showLayoutList:   false,
 		showSizeList:     false,
 		showStandardList: false,
-		showAllInfo:      true,
+		showAllInfo:      showAllInfo,
 		pressedKeys:      make(map[uint16]bool),
+	}
+}
+
+func (m Model) saveConfig() config.Config {
+	v := m.showAllInfo
+	return config.Config{
+		ActiveLayout:   m.activeLayout,
+		ActiveSize:     m.activeSize,
+		ActiveStandard: m.activeStandard,
+		Locked:         m.locked,
+		ShowAllInfo:    &v,
 	}
 }

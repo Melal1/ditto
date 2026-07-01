@@ -122,6 +122,9 @@ func topBar(m Model, width int) string {
 	legends := sb.String()
 
 	std := StatusBarStyle.Render(m.activeStandard)
+	if m.locked {
+		std = StatusBarStyle.Render("locked") + " " + StatusBarStyle.Render("•") + " " + std
+	}
 
 	sw := width - lipgloss.Width(legends) - lipgloss.Width(std)
 	spacer := strings.Repeat(" ", max(0, sw))

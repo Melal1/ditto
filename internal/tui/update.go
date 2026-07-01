@@ -22,22 +22,31 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyPressMsg:
 		switch msg.String() {
 		case "l":
-			m.showLayoutList = !m.showLayoutList
-			m.showSizeList = false
-			m.showStandardList = false
+			if !m.locked {
+				m.showLayoutList = !m.showLayoutList
+				m.showSizeList = false
+				m.showStandardList = false
+			}
 			return m, nil
 		case "s":
-			m.showSizeList = !m.showSizeList
-			m.showLayoutList = false
-			m.showStandardList = false
+			if !m.locked {
+				m.showSizeList = !m.showSizeList
+				m.showLayoutList = false
+				m.showStandardList = false
+			}
 			return m, nil
 		case "d":
-			m.showStandardList = !m.showStandardList
-			m.showLayoutList = false
-			m.showSizeList = false
+			if !m.locked {
+				m.showStandardList = !m.showStandardList
+				m.showLayoutList = false
+				m.showSizeList = false
+			}
 			return m, nil
 		case "h":
-			m.showAllInfo = !m.showAllInfo
+			if !m.locked {
+				m.showAllInfo = !m.showAllInfo
+				config.SaveConfig(m.saveConfig())
+			}
 			return m, nil
 		}
 
@@ -88,7 +97,7 @@ func (m Model) handleLayoutListUpdate(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) 
 			m.activeStandard = "iso"
 		}
 		m.showLayoutList = false
-		config.SaveConfig(config.Config{ActiveLayout: m.activeLayout, ActiveSize: m.activeSize, ActiveStandard: m.activeStandard})
+		config.SaveConfig(m.saveConfig())
 		return m, nil
 	case components.ListCancel:
 		m.showLayoutList = false
@@ -110,7 +119,7 @@ func (m Model) handleSizeListUpdate(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 			m.activeSize = size
 		}
 		m.showSizeList = false
-		config.SaveConfig(config.Config{ActiveLayout: m.activeLayout, ActiveSize: m.activeSize, ActiveStandard: m.activeStandard})
+		config.SaveConfig(m.saveConfig())
 		return m, nil
 	case components.ListCancel:
 		m.showSizeList = false
@@ -131,7 +140,7 @@ func (m Model) handleStandardListUpdate(msg tea.KeyPressMsg) (tea.Model, tea.Cmd
 		m.showStandardList = false
 		m.kanaActive = false
 		m.hangeulActive = false
-		config.SaveConfig(config.Config{ActiveLayout: m.activeLayout, ActiveSize: m.activeSize, ActiveStandard: m.activeStandard})
+		config.SaveConfig(m.saveConfig())
 		return m, nil
 	case components.ListCancel:
 		m.showStandardList = false
@@ -166,11 +175,13 @@ func (m Model) handleGlobalKeys(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	case "ctrl+c":
 		return m, tea.Quit
 	case "c":
-		switch m.activeStandard {
-		case "jis":
-			m.kanaActive = !m.kanaActive
-		case "ks":
-			m.hangeulActive = !m.hangeulActive
+		if !m.locked {
+			switch m.activeStandard {
+			case "jis":
+				m.kanaActive = !m.kanaActive
+			case "ks":
+				m.hangeulActive = !m.hangeulActive
+			}
 		}
 	}
 
