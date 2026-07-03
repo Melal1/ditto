@@ -73,7 +73,7 @@ Or via the flake for nix users:
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     ditto = {
-      url = "github:Melal1/ditto";
+      url = "github:arvingarciabtw/ditto";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
