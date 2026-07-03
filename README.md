@@ -1,14 +1,12 @@
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/97abc570-10c9-4f0a-bf7f-2e80b4a84d17" height="60" alt="ditto logo"/>
+<img src="https://github.com/user-attachments/assets/97abc570-10c9-4f0a-bf7f-2e80b4a84d17" height="60" alt="ditto logo"/>
 
-  <br>
-
-[![Go](https://img.shields.io/badge/Go-%2300ADD8.svg?&logo=go&logoColor=white)](https://go.dev)
-[![Bubble Tea](https://img.shields.io/badge/Bubble%20Tea-624fff)](https://pkg.go.dev/charm.land/bubbletea/v2)
-[![Lipgloss](https://img.shields.io/badge/Lipgloss-DB7093)](https://pkg.go.dev/charm.land/lipgloss/v2)
-[![evdev](https://img.shields.io/badge/evdev-000000)](https://pkg.go.dev/github.com/gvalkov/golang-evdev)
-
-</div>
+[![Go](https://img.shields.io/github/languages/top/arvingarciabtw/ditto?logo=go&label=)](https://go.dev)
+[![CI](https://img.shields.io/github/actions/workflow/status/arvingarciabtw/ditto/ci.yml?logo=github&label=)](https://github.com/arvingarciabtw/ditto/actions)
+[![Commits](https://img.shields.io/github/commit-activity/m/arvingarciabtw/ditto)](https://github.com/arvingarciabtw/ditto/commits)
+[![Downloads](https://img.shields.io/github/downloads/arvingarciabtw/ditto/total?logo=github)](https://github.com/arvingarciabtw/ditto/releases)
+[![Release](https://img.shields.io/github/v/release/arvingarciabtw/ditto?logo=github)](https://github.com/arvingarciabtw/ditto/releases)
+[![AUR](https://img.shields.io/aur/version/ditto?logo=archlinux)](https://aur.archlinux.org/packages/ditto)
+[![License](https://img.shields.io/github/license/arvingarciabtw/ditto)](https://github.com/arvingarciabtw/ditto/blob/main/LICENSE)
 
 <img width="1280" height="683" alt="ditto v1.0.3 demo" src="https://github.com/user-attachments/assets/f6cda363-045b-4313-9ae2-10dfda03ced8" />
 
